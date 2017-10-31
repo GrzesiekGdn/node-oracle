@@ -1,19 +1,19 @@
-FROM node:alpine
+FROM node
 
 # set working directory to root folder
 WORKDIR /
 
-# configure apk
-RUN apk update \
-  && apk upgrade
+# configure apt-get
+RUN apt-get update \
+  && apt-get -y upgrade
 
 # install libaio, python, zip, gcc, make & g++
-RUN apk add --update python \
-  && apk add --update zip \
-  && apk add --update gcc \
-  && apk add --update make \
-  && apk add --update g++ \
-  && apk add --update libaio
+RUN apt-get install python \
+  && apt-get -y install zip \
+  && apt-get -y install gcc \
+  && apt-get -y install make \
+  && apt-get -y install g++  \
+  && apt-get -y install libaio1
 
 # copy oracle files and configure oracle instantclient
 RUN mkdir -p /opt/oracle
@@ -29,7 +29,13 @@ ENV LD_LIBRARY_PATH=/opt/oracle/instantclient:$LD_LIBRARY_PATH
 ENV OCI_LIB_DIR=/opt/oracle/instantclient
 ENV OCI_INC_DIR=/opt/oracle/instantclient/sdk/include
 
+#ENV PATH=/home/node/.npm-global/bin:$PATH
+#ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+
 # install oracledb module for node
+USER root
+RUN chown -R node /usr/local/lib/node_modules
+USER node
 RUN npm install -g oracledb
 
 # change workdirectory to /home/node

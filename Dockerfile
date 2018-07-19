@@ -1,4 +1,4 @@
-FROM node
+FROM node:8
 
 # set working directory to root folder
 WORKDIR /
